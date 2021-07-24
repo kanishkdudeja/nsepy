@@ -104,6 +104,14 @@ index_history_url = URLFetchSession(
     url='http://www1.nseindia.com/products/dynaContent/equities/indices/historicalindices.jsp')
 
 """
+1. indexType=index name
+2. fromDate string dd-mm-yyyy
+3. toDate string dd-mm-yyyy
+"""
+index_tri_history_url = URLFetchSession(
+    url='https://www1.nseindia.com/products/dynaContent/equities/indices/total_returnindices.jsp?')
+
+"""
 1. ddmmyyyy
 """
 index_daily_snapshot_url = URLFetchSession(

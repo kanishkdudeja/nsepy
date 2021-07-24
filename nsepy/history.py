@@ -62,6 +62,11 @@ INDEX_HEADERS = ['Date',
                  'Volume', 'Turnover']
 INDEX_SCALING = {'Turnover': 10000000}
 
+INDEX_TRI_SCHEMA = [dd_mmm_yyyy,
+                float]
+INDEX_TRI_HEADERS = ['Date',
+                 'Total Returns Index']
+
 VIX_INDEX_SCHEMA = [dd_mmm_yyyy,
                     float, float, float, float,
                     float, float, float]
@@ -310,6 +315,36 @@ def get_index_pe_history_quanta(symbol, start, end):
     df = tp.get_df()
     return df
 
+def get_index_tri_data(symbol, start, end):
+    frame = inspect.currentframe()
+    args, _, _, kwargs = inspect.getargvalues(frame)
+    del(kwargs['frame'])
+    start = kwargs['start']
+    end = kwargs['end']
+    if (end - start) > timedelta(130):
+        kwargs1 = dict(kwargs)
+        kwargs2 = dict(kwargs)
+        kwargs1['end'] = start + timedelta(130)
+        kwargs2['start'] = kwargs1['end'] + timedelta(1)
+        t1 = ThreadReturns(target=get_index_tri_data, kwargs=kwargs1)
+        t2 = ThreadReturns(target=get_index_tri_data, kwargs=kwargs2)
+        t1.start()
+        t2.start()
+        t1.join()
+        t2.join()
+        return pd.concat((t1.result, t2.result))
+    else:
+        index_name = symbol
+        resp = index_tri_history_url(indexType=index_name,
+                                fromDate=start.strftime('%d-%m-%Y'),
+                                toDate=end.strftime('%d-%m-%Y'))
+
+        bs = BeautifulSoup(resp.text, 'lxml')
+        tp = ParseTables(soup=bs,
+                        schema=INDEX_TRI_SCHEMA,
+                        headers=INDEX_TRI_HEADERS, index="Date")
+        df = tp.get_df()
+        return df
 
 def get_price_list(dt, series='EQ'):
     MMM = dt.strftime("%b").upper()
