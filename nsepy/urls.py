@@ -47,7 +47,7 @@ def get_symbol_count(symbol):
 
 
 """
-#symbol=SBIN&segmentLink=3&symbolCount=1&series=EQ&dateRange=1month&fromDate=&toDate=&dataType=PRICEVOLUME'
+#symbol=SBIN&segmentLink=3&symbolCount=1&series=EQ&dateRange=1month&fromDate=&toDate=&dataType=PRICEVOLUMEDELIVERABLE'
 """
 equity_history_url_full = URLFetchSession(
     url='http://www1.nseindia.com/products/dynaContent/common/productsSymbolMapping.jsp')
@@ -61,7 +61,7 @@ toDate="dd-mm-yyyy"
 dd = equity_history_url(symbol='SBIN', series="EQ", fromDate="01-01-2017", toDate="01-01-2017")
 """
 equity_history_url = partial(equity_history_url_full,
-                             dataType='PRICEVOLUME',
+                             dataType='PRICEVOLUMEDELIVERABLE',
                              segmentLink=3, dateRange="")
 
 """
