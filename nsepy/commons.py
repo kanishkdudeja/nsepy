@@ -163,13 +163,18 @@ class URLFetch:
         u = urlparse(self.url)
         self.session.headers.update({'Host': u.hostname})
         url = self.url%(args)
+        response = None
         if self.method == 'get':
-            return self.session.get(url, params=kwargs, proxies = self.proxy )
+            response = self.session.get(url, params=kwargs, proxies = self.proxy )
         elif self.method == 'post':
             if self.json:
-                return self.session.post(url, json=kwargs, proxies = self.proxy )
+                response = self.session.post(url, json=kwargs, proxies = self.proxy )
             else:
-                return self.session.post(url, data=kwargs, proxies = self.proxy )
+                response = self.session.post(url, data=kwargs, proxies = self.proxy )
+
+        # Throw an exception if we receive a status code in the 400-599 range.
+        response.raise_for_status()
+        return response
 
     def update_proxy(self, proxy):
         self.proxy = proxy
